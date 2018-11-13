@@ -24,6 +24,8 @@ export default class Container {
         this.LinsTo = {}//存放线图形的
         this.childNodes = {}
         this.menu = menuPath
+        this.displayId = null//记录上一次弹出功能菜单和触手的节点ID
+        this.moveConnectIo = {state:false,IO:null}//在连线时，鼠标拖动到这个节点上，弹出需要连接的触手
     }
 
     /**
@@ -181,7 +183,7 @@ export default class Container {
             item.draw() 
         })
         _.forEach(this.childNodes, item => {
-            if(item.animtionState){console.log(item);}
+            //if(item.animtionState){console.log(item);}
             item.draw() 
         })
     }

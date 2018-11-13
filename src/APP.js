@@ -18,7 +18,6 @@ export default class APP extends React.Component {
     }
     componentWillMount(){
         window.requestAnimationFrame(function(){
-            console.log('@@@@')
         }) 
     }
     componentDidMount(){
@@ -26,44 +25,45 @@ export default class APP extends React.Component {
         container.enableMouse() 
         container.enableClick() 
         let circle = new Circle(200,200,50) 
-        console.log(circle) 
         container.addChild(circle) 
         let fn  = (self,point,container)=>{
             let conT = container.Tentacle 
             let tenId = null 
             self.anastole = !self.anastole
             if (self.click == 0) {
+                let ID = container.displayId 
+                if(ID !=null && ID !=self.id) {
+                    container.childNodes[ID].click = 0 
+                }
+                container.displayId = self.id
                 self.click = 1 
             } else if (self.click == 1) {
                 self.click = 2 
             } else {
                 self.click = 1 
             }
-/*             for(let key in conT){
-                if(conT[key].circleId == self.id){
-                    conT[key].anastole = !conT[key].anastole 
-                    return 
-                }
-            } */
         }
     let fn1 = (self,poin,container) =>{
         let conT = container.Tentacle 
         let tenId = null 
         self.anastole = !self.anastole
+        console.log(self.click)
+        console.log("*********")
+        console.log(self)
         if (self.click == 0) {
+            let ID = container.displayId 
+            if(ID !=null && ID !=self.id) {
+                console.log(ID)
+                container.childNodes[ID].click = 0 
+            }
+            container.displayId = self.id
             self.click = 1 
         } else if (self.click == 1) {
             self.click = 2 
         } else {
             self.click = 1 
         }
-        console.log(self.anastole);
-/*         for(let key in conT){
-            if(conT[key].circleId == self.id){
-                conT[key].anastole = !conT[key].anastole 
-                return 
-            }
-        } */
+        console.log(self.click)
     }
         circle.on('mySelfClick',fn)
        // let tentacle = new Tentacle(circle) 
@@ -108,14 +108,16 @@ export default class APP extends React.Component {
         //container.addTentacle(tentacle) 
         //container.addTentacle(tentacle1) 
 
-
-      function animate(){
-        container.draw()
-        window.requestAnimationFrame(animate) 
-      }
-     
-      window.requestAnimationFrame(animate) 
-    }
+        function animate(){
+            container.draw()
+            RAF(animate) 
+        }
+      
+        window.RAF = (function(){
+            return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function (callback) {window.setTimeout(callback, 1000 / 60); };
+        })();
+        RAF(animate)
+        }
     render() {
         return (<div>
             <canvas  ref ={this.canvas} height='800' width='1500' style={{border:'1px solid rgba(0,0,0,1)' }}></canvas>

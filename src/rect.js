@@ -13,13 +13,14 @@ export  default class Rect  extends  cce.DisplayObject {
         this.tiemr = false //定时器开启标志
         this.index = null //记录当前触手的输入/输出端口排在第几位
         this.portStr = null //记录当前的端口是输入还是输出
+        this.isCach = false 
+        this.cachCanvas = document.createElement("canvas")
+        this.cachContxt = this.cachCanvas.getContext("2d")
         this._init() 
     }
-
     _init() {
         this.factory() 
     }
-
     factory() {
         const move = (self, point, container) => {
             const line = new  Line(this, point)//在这里并没有对动态的线做来源处理，来源是In还是Out，Line(Out,In)
@@ -27,17 +28,44 @@ export  default class Rect  extends  cce.DisplayObject {
             container.addLine(line) 
         }
         const up = (self, point, container) => {
+            if (self.minNode == self.node) {
+                return 
+            }
+            container.moveConnectIo = {state:false,IO:null,ID:null}//将标志位,置回动画收回
+            //self.minNode.click = 0 //将标志位,置回动画收回
             const emp = container.LinsTo 
+            const  ID = container.displayId 
+            if (ID !== null) {
+                console.log(ID)
+                console.log(container.childNodes)
+                //因为鼠标在矩形内松开也会触发这个函数，所以判断下
+                if (container.childNodes[ID] && emp.DLL) {
+                    container.childNodes[ID].click = 0
+                    container.displayId =self.minNode.id 
+                }
+            }
             delete emp.DLL 
             this.remove('mouseGrageMove', move) 
         }
-
-        this.on('mousedown', () => {
+        this.on('mousedown', (self, point, container) => {
+            if (self.minNode == self.node) {
+                return 
+            }
+            if (!this.anastoleRect) {//当前的触手是伸开的，在全局上记录一个标示位，代表着我要开始拖动线了，各个节点准备好，我拖到谁那，谁给我弹出我要的IO
+                container.moveConnectIo = {state:true,IO:this.portStr,ID:this.minNode.id}
+            }
             this.on('mouseGrageMove', move) 
             this.on('mouseGrageUp', up) //鼠标在矩形以外的任意位置up事件
         })
 
         this.on('mouseup', (self, point, container) => {
+            if (self.minNode == self.node) {
+                return 
+            }
+            let ID = container.moveConnectIo.ID //获取发射节点的ID
+            container.moveConnectIo = {state:false,IO:null,ID:null}//将标志位,置回动画收回
+            self.minNode.click = 0 //将标志位,置回动画收回
+            container.displayId = ID 
             const lines = container.LinsTo 
             let line = container.LinsTo.DLL 
             if (line == undefined) {
@@ -185,7 +213,6 @@ export  default class Rect  extends  cce.DisplayObject {
             this.context = self.context 
             this.canvas = self.canvas 
         }
-
         if (self.anastole) {//收缩状态
             if (index === 0) {//第一个触手
                 if (!this.anastoleRect) {//当前触手是伸展状态
@@ -210,14 +237,20 @@ export  default class Rect  extends  cce.DisplayObject {
         } else {//伸展状态
             _draw_small(str) 
         }
-        this.context.beginPath() 
-        this.context.fillStyle='rgba(132, 134, 144, 1)' 
-        this.context.moveTo(this.node.x, (this.node.y+20)) 
-        this.context.lineTo((this.node.x+20), this.node.y) 
-        this.context.lineTo(this.node.x, (this.node.y-20)) 
-        this.context.lineTo((this.node.x-20), this.node.y) 
-        this.context.fill() 
-       this.context.closePath() 
+        if (this.isCach) {
+            this.context.drawImage(this.cachCanvas, this.node.x-20, this.node.y-20);
+        } else {
+            this.cachContxt.beginPath() 
+            this.cachContxt.fillStyle='rgba(132, 134, 144, 1)' 
+            this.cachContxt.moveTo(20, (20+20)) 
+            this.cachContxt.lineTo((20+20), 20) 
+            this.cachContxt.lineTo(20, (20-20)) 
+            this.cachContxt.lineTo((20-20), 20) 
+            this.cachContxt.fill() 
+            this.cachContxt.closePath() 
+            this.isCach = true 
+        }
+
     }
     hasPoint(point) {
         this.lastState =this.nowState 

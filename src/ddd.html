@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <canvas id = "canvas" width="800" height="800"style="border:1px solid black"></canvas>
+</body>
+</html>
+<script>
+    let cavas = document.getElementById('canvas')
+    let ctx = cavas.getContext("2d");
+   // ctx.save()
+    let img  = new Image()
+    img.src = "./img/chunse.png"
+    img.onload = () => {
+        ctx.drawImage(img,0,0)
+    }
+   // ctx.restore();
+   
+</script>

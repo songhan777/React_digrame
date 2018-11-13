@@ -32,29 +32,45 @@ export  default class Tentacle  extends  cce.DisplayObject {
     }
     _draw() {
         const self = this 
+        function creatIoNode (self,str) {
+            let strAry = str + 'Ary';
+            _.forEach(self[str], (item,key) => {
+                const index = self[strAry].indexOf(key) 
+                item.draw(self,index,str) 
+            })
+        }
         //先在canvas上画线
+        if (self.click == 0) {
+            this.anastole = true
+        } else if ( self.click == 3) {
+            _.forEach(this.Lins,item => {
+                this.context.beginPath()
+                this.context.strokeStyle = 'rgba(36,36,36,1)'
+                this.anastole = false 
+                if (item[this.IO] !== undefined) {
+                    this.context.moveTo(item[this.IO].node.x,item[this.IO].node.y)
+                    this.context.lineTo(item[this.IO].minNode.x,item[this.IO].minNode.y)
+                }
+                this.context.lineWidth=2 
+                this.context.stroke() 
+                this.context.closePath() 
+            })
+            creatIoNode(this,this.IO)
+            return 
+        }
+        
         _.forEach(this.Lins, item => {
             this.context.beginPath() 
             this.context.strokeStyle = 'rgba(36,36,36,1)' 
-            if(item.In !=undefined){//In输入 到源点的连线
-
-                this.context.moveTo(item.In.node.x, item.In.node.y)
-                this.context.lineTo(item.In.minNode.x, item.In.minNode.y) 
-            } else {//Out输出到源点的连线
-                this.context.moveTo(item.Out.minNode.x, item.Out.minNode.y) 
-                this.context.lineTo(item.Out.node.x, item.Out.node.y)
+            for (let key in item) {
+                this.context.moveTo(item[key].node.x, item[key].node.y)
+                this.context.lineTo(item[key].minNode.x, item[key].minNode.y)
             }
             this.context.lineWidth=2 
             this.context.stroke() 
             this.context.closePath() 
         })
-        _.forEach(this.In, (item,key) => {
-            const index = this.InAry.indexOf(key) 
-            item.draw(self,index,'In') 
-        })
-        _.forEach(this.Out, (item,key) => {
-            const index = this.OutAry.indexOf(key) 
-            item.draw(self,index,'Out') 
-        })
+        creatIoNode(self,'In')
+        creatIoNode(self,'Out')
     }
 }
