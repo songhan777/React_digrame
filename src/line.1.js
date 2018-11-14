@@ -30,6 +30,28 @@ export default class Line extends cce.DisplayObject {
             y = this.to.node.y
         }
 
+        /*         let  angle = Math.atan2((y-this.from.node.y),(x-this.from.node.x))
+                console.log(angle)
+                this.cachContxt.restore()
+                this.cachContxt.rotate(angle);
+                this.cachContxt.translate(100,100)
+                this.context.drawImage(this.cachCanvas, 100, 100, x-this.from.node.x, y-this.from.node.y,this.from.node.x, this.from.node.y, x-this.from.node.x, y-this.from.node.y) */
+
+        //console.log(angle)
+        // let widt = Math.sqrt( Math.pow(this.from.node.x-x,2) + Math.pow(this.from.node.y-y,2) ).toFixed(2)
+        // this.cachContxt.save();
+
+        /*         let linImg = new Image()
+                linImg.src = img 
+                const _this = this 
+                linImg.onload = ()=>{
+                    console.log(1)
+                    _this.context.drawImage(linImg,0,0)
+                    //_this.context.drawImage(linImg,_this.from.node.x,_this.from.node.y,_this.from.node.x-x,_this.from.node.y-y)
+            
+                }
+                this.context.drawImage(linImg,0,0) */
+
 
         function createArrow(ctx, ary, sta, end) {
             //画箭头 
@@ -57,56 +79,26 @@ export default class Line extends cce.DisplayObject {
             });
 
         }
-        function makeArrowsReference(ary, sta = [0, 0], end = [0, 0]) {
-
-
-
-                let subA = accSub(sta[0],end[0])
-                let subB = accSub(sta[1],end[1])
-                let squareX = accMul(subA, subA)
-                let squareY = accMul(subB, subB) 
-                let sumSquare = accAdd(squareX,squareY)
-                let length  = Math.sqrt(sumSquare)
-                let fn = (line) => {
-                    if ((length - line) <= 20) {
-                        return 
-                    } 
-                    let proportion = accDiv(line,length)//线段比例
-                    //x= x1 + pro(x2-x1)
-                    let x = accAdd(end[0],accMul(proportion,accSub(sta[0],end[0])))
-                    let y = accAdd(end[1],accMul(proportion,accSub(sta[1],end[1])))
-                    ary.push([x,y])
-                    line += 20
-                    fn(line)
-                }
-                fn(20)
-    
-/*             let subx = accAdd(sta[0], end[0])
-            let divx = accDiv(subx, 2)
-            let suby = accAdd(sta[1], end[1])
-            let divy = accDiv(suby, 2)
+        function makeArrowsReference (ary,sta = [0,0],end = [0,0]) {
+            let subx  = accAdd(sta[0],end[0])
+            let divx = accDiv(subx,2)
+            let suby = accAdd(sta[1],end[1])
+            let divy = accDiv(suby,2)
             let x = divx
             let y = divy
-            let center = [x, y]
-            let a = 1
-            let length = null;
-            if (a == 0) {
-                length = Math.sqrt(Math.pow(Number((sta[0] - x).toFixed(2)), 2) + Math.pow(Number((sta[1] - y).toFixed(2)), 2))
-            } else {
-                let subA = accSub(sta[0],x)
-                let subB = accSub(sta[1],y)
-                let squareX = accMul(subA, subA)
-                let squareY = accMul(subB, subB) 
-                let sumSquare = accAdd(squareX,squareY)
-                length  = Math.sqrt(sumSquare)
-            }
-
+            let center = [x,y]
+            let a = accAdd(sta[0],x)
+            let b = accAdd(sta[1],y)
+            let c = accMul(a,a)
+            let d = accMul(b,b)
+            let e = accAdd(c,d)
+                console.log(e)
+            let length  = Math.sqrt(e)
             ary.push(center)
-            if (length < 20) {
-                console.log(length)
-                return}
-            makeArrowsReference(ary, sta, center)
-            makeArrowsReference(ary, center, end) */
+            console.log(length)
+            if (length < 20)  return  
+            makeArrowsReference(ary,sta,center)
+            makeArrowsReference(ary,center,end)
         }
         this.context.beginPath()
         this.context.strokeStyle = 'rgba(36,36,36,1)'
