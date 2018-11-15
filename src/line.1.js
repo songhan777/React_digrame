@@ -1,6 +1,6 @@
 import * as _ from 'lodash'
 import img from './img/img_line_1.png'
-import {accAdd, accSub, accMul, accDiv}  from './math.js'
+import {accAdd, accSub, accMul, accDiv}  from './Canvas/math.js'
 export default class Line extends cce.DisplayObject {
     constructor(aa, bb) {
         super()

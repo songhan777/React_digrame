@@ -1,9 +1,9 @@
 import React from 'react' 
 import {DispalyObject, Container} from './Canvas/index' 
-import  Circle  from  './circle' 
-import  Tentacle from './Tentacle'
-import Rect  from './rect' 
-import Line  from  './line'
+import  Circle  from './Canvas/circle'
+import  Tentacle from './Canvas/Tentacle'
+import Rect  from './Canvas/rect'
+import Line  from './Canvas/line'
 import * as _ from 'lodash' 
 import { Function } from 'core-js' 
 
@@ -11,6 +11,7 @@ export default class APP extends React.Component {
     constructor (){
         super() 
         this.canvas = React.createRef()
+        this.container = this.container
         this.state = {
             s : [] ,
             a : ""
@@ -22,50 +23,12 @@ export default class APP extends React.Component {
     }
     componentDidMount(){
         let  container = new Container (this.canvas.current) 
+        this.container = container
         container.enableMouse() 
         container.enableClick() 
         let circle = new Circle(200,200,50) 
         container.addChild(circle) 
-        let fn  = (self,point,container)=>{
-            let conT = container.Tentacle 
-            let tenId = null 
-            self.anastole = !self.anastole
-            if (self.click == 0) {
-                let ID = container.displayId 
-                if(ID !=null && ID !=self.id) {
-                    container.childNodes[ID].click = 0 
-                }
-                container.displayId = self.id
-                self.click = 1 
-            } else if (self.click == 1) {
-                self.click = 2 
-            } else {
-                self.click = 1 
-            }
-        }
-    let fn1 = (self,poin,container) =>{
-        let conT = container.Tentacle 
-        let tenId = null 
-        self.anastole = !self.anastole
-        console.log(self.click)
-        console.log("*********")
-        console.log(self)
-        if (self.click == 0) {
-            let ID = container.displayId 
-            if(ID !=null && ID !=self.id) {
-                console.log(ID)
-                container.childNodes[ID].click = 0 
-            }
-            container.displayId = self.id
-            self.click = 1 
-        } else if (self.click == 1) {
-            self.click = 2 
-        } else {
-            self.click = 1 
-        }
-        console.log(self.click)
-    }
-        circle.on('mySelfClick',fn)
+
        // let tentacle = new Tentacle(circle) 
         let recIn = new Rect(circle) 
         let recIn1 = new Rect(circle) 
@@ -97,7 +60,7 @@ export default class APP extends React.Component {
         let  circle1 = new Circle(500,500,50) 
 
         container.addChild(circle1)
-        circle1.on('mySelfClick',fn1)
+    
 
         // let tentacle1 = new Tentacle(circle1)
 
@@ -118,9 +81,13 @@ export default class APP extends React.Component {
         })();
         RAF(animate)
         }
+        btnClick = () => {
+            console.log(this.container.serialize())
+        }
     render() {
         return (<div>
             <canvas  ref ={this.canvas} height='800' width='1500' style={{border:'1px solid rgba(0,0,0,1)' }}></canvas>
+            <button onClick={this.btnClick}>序列化</button>
             </div>)
     }
 }

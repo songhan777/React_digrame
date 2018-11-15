@@ -197,8 +197,8 @@ export  default class Rect  extends  cce.DisplayObject {
                     this.node = this._locationInfo(index, str, this.referenceLen) 
                 }
             } else {
-                 const ID = self.InAry[index-1] 
-                 const flg = self.In[ID].anastoleRect 
+                 const ID = self[str+'Ary'][index-1] 
+                 const flg = self[str][ID].anastoleRect 
                 if (!flg && this.anastoleRect) {//判断上一个触手完全展开了,并且当前触手没有展开
                     self.animtionState = this._setTimeoutSen(index, str, length) //，如果定时没开，设置定时器
                 } else if(flg){//上一个触手是缩回的状态
@@ -223,8 +223,8 @@ export  default class Rect  extends  cce.DisplayObject {
                 } 
 
             } else {
-                 const ID  = self.InAry[index-1] 
-                 const flg = self.In[ID].anastoleRect 
+                 const ID  = self[str+'Ary'][index-1] 
+                 const flg = self[str][ID].anastoleRect 
                 if (flg && !this.anastoleRect) {
                     self.animtionState = this._setTimeoutBack(index, str, length)
                 } else if (!flg) {

@@ -1,6 +1,6 @@
 import * as _ from 'lodash'
 import init from './init'
-import menuPath from  './menuPath'
+import menuPath from './menuPath'
 /**
  *
  *容器类，用来装canvas2d句柄，以及图形集合
@@ -18,14 +18,29 @@ export default class Container {
      * @property childNodes  {Object} 存放图形的数组元素
      *
      */
-    constructor(canvas) {
+    constructor(canvas,id = null) {
+        this.id = id
         this.canvas = canvas
         this.context = this.canvas.getContext('2d')
-        this.LinsTo = {}//存放线图形的
+        this.LinsTo = {} //存放线图形的
         this.childNodes = {}
         this.menu = menuPath
-        this.displayId = null//记录上一次弹出功能菜单和触手的节点ID
-        this.moveConnectIo = {state:false,IO:null}//在连线时，鼠标拖动到这个节点上，弹出需要连接的触手
+        this.displayId = null //记录上一次弹出功能菜单和触手的节点ID
+        this.moveConnectIo = {
+            state: false,
+            IO: null
+        } //在连线时，鼠标拖动到这个节点上，弹出需要连接的触手
+        this.init()
+    }
+    init() {
+        if (this.id == null) this.id = this.createOwnId();
+    }
+    createOwnId() {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+            const r = (Math.random() * 16) | 0 
+            const v = c === 'x' ? r : (r & 0x3) | 0x8 
+            return v.toString(16) 
+        }) 
     }
 
     /**
@@ -35,7 +50,6 @@ export default class Container {
      * @param {Object} continer
      * @memberof Container
      */
-
     //鼠标事件的集合
     enableMouse() {
         //在event里面有一个数据type 里面存了一个数据类型
@@ -56,7 +70,7 @@ export default class Container {
      * @method enableClick
      */
     enableClick() {
-        const self = this 
+        const self = this
         this.canvas.addEventListener('click', (e) => {
             self._handleClick(e, self)
         }, false)
@@ -69,22 +83,96 @@ export default class Container {
      * @memberof Container
      */
     addChild(ele) {
-        ele.canvas = this.canvas 
-        ele.context = this.context 
-        this.childNodes[ele.id]=ele 
-    }
-    addLine(ele) {
-        ele.canvas  = this.canvas  
-        ele.context = this.context 
-        this.LinsTo[ele.id] = ele 
-    }
-
-/*     addMenu(men) {
         ele.canvas = this.canvas
         ele.context = this.context
-        this.menu = men 
-    } */
+        this.childNodes[ele.id] = ele
+    }
+    addLine(ele) {
+        ele.canvas = this.canvas
+        ele.context = this.context
+        this.LinsTo[ele.id] = ele
+    }
+    /**
+     *
+     *将当前图形序列化
+     * @memberof Container
+     */
+    serialize() {
+        let links = []
+        let nodes = []
+        //遍历this.LinsTo
+        _.forEach(this.LinsTo, (item, key) => {
+            let link = {}
+            link.id = key
+            link.source = item.from.minNode.id
+            link.sourcePort = item.from.id
+            link.target = item.to.minNode.id
+            link.targetPort = item.to.id
+            link.width = 10 //现在是写死的，无法改变
+            //后续增加的接口   
+            link.type = 'default'
+            link.selected = true
+            link.points = []
+            link.extras = ''//附加部分
+            link.labels = []//连线标签
+            link.color = ""//颜色
+            link.curvyness = ''// 贝塞尔弯曲度
+            links.push(link)
+            link = null // 清空缓存
+        })
+        //遍历thischildNodes
+        _.forEach(this.childNodes,(item,key) => {
+            let node = {} 
+            node.id = key
+            node.x = item.x
+            node.y = item.y
+            let ports = []
+            _.forEach(item.In,(p,key) => {
+                let port = {}
+                port.id = key
+                port.in = true 
+                port.color = 'rgba(132, 134, 144, 1)'//目前写死的，还不能配置
+                port.parenNode = p.minNode.id
+                //后续增加的接口
+                port.type = 'default'
+                port.selected = true
+                port.name = '待定'
+                //port.links
+                //port.label
+                ports.push(port)
+            })
+            _.forEach(item.Out,(p,key) => {
+                let port = {}
+                port.id = key
+                port.in = false 
+                port.color = 'rgba(132, 134, 144, 1)'//目前写死的，还不能配置
+                port.parenNode = p.minNode.id
+                //后续增加的接口
+                port.type = 'default'
+                port.selected = true
+                port.name = '待定'
+                //port.links
+                //port.label
+                ports.push(port)
+            })
+            node.ports = ports
+            //后续增加的接口
+            node.r = item.r//目前半径改变的画图形还无法跟着变更
+            node.type = 'default'
+            node.selected = true
+            node.extras = ''//附加属性
+            nodes.push(node)
+        })
+        return  {id:this.id, links:links, nodes:nodes}
+    }
+    /**
+     *将json反序列化成工作流图形
+     *
+     * @memberof Container
+     */
+    unSerialize() {
 
+    }
     /**
      * 触发鼠标事件的函数
      * @param {Object} point 在canvas中坐标值
@@ -95,20 +183,20 @@ export default class Container {
     _fireMous(point, eleAry, eleAryName) {
 
         const self = this
-        if ( !(eleAry instanceof Array) ) {
-            return  
+        if (!(eleAry instanceof Array)) {
+            return
         }
 
         eleAry.forEach(item => {
             if (item.hasPoint(point)) {
                 //返回true在图形内部
                 //这里触发的问题
-                item.fire(eleAryName,point,self)
+                item.fire(eleAryName, point, self)
             }
-        }) 
+        })
     }
 
-        /**
+    /**
      * 触发鼠标事件的函数,专门用来拖拽防止鼠标飞出
      * @param {Object} point 在canvas中坐标值
      * @param {Array} eleAry 绑定该事件的元素集合
@@ -116,38 +204,38 @@ export default class Container {
      * @private
      */
     _fireAvoidLostMous(point, eleAry, eleAryName) {
-        const self = this 
-        if ( !(eleAry instanceof Array)) {
-            return  
+        const self = this
+        if (!(eleAry instanceof Array)) {
+            return
         }
         eleAry.forEach(item => {
-            item.fire(eleAryName,point,self)
-        }) 
+            item.fire(eleAryName, point, self)
+        })
     }
 
     _handleMousemove(e, self) {
         const point = self._windowToCanvas(e.clientX, e.clientY)
-        const eleAry = cce.EventManager._target.mousemove 
-        const eleAry2 = cce.EventManager._target.mouseGrageMove 
-        self._fireMous(point, eleAry, 'mousemove') 
-        self._fireAvoidLostMous(point,eleAry2,'mouseGrageMove') 
+        const eleAry = cce.EventManager._target.mousemove
+        const eleAry2 = cce.EventManager._target.mouseGrageMove
+        self._fireMous(point, eleAry, 'mousemove')
+        self._fireAvoidLostMous(point, eleAry2, 'mouseGrageMove')
     }
 
     _handleMouseup(e, self) {
         const point = self._windowToCanvas(e.clientX, e.clientY)
-        const eleAry = cce.EventManager._target.mouseup 
-        const eleAry2 = cce.EventManager._target.mouseGrageUp 
+        const eleAry = cce.EventManager._target.mouseup
+        const eleAry2 = cce.EventManager._target.mouseGrageUp
         const eleClickAry = cce.EventManager._target.mouseUpClick
-        self._fireMous(point, eleAry, 'mouseup') 
-        self._fireAvoidLostMous(point,eleAry2,'mouseGrageUp') 
+        self._fireMous(point, eleAry, 'mouseup')
+        self._fireAvoidLostMous(point, eleAry2, 'mouseGrageUp')
         self._fireMous(point, eleClickAry, 'mouseUpClick')
     }
 
     _handleMousedown(e, self) {
         const point = self._windowToCanvas(e.clientX, e.clientY)
-        const eleAry = cce.EventManager._target.mousedown 
+        const eleAry = cce.EventManager._target.mousedown
         const eleClickAry = cce.EventManager._target.mouseDownClick
-        self._fireMous(point, eleAry, 'mousedown') 
+        self._fireMous(point, eleAry, 'mousedown')
         self._fireMous(point, eleClickAry, 'mouseDownClick')
     }
 
@@ -159,15 +247,15 @@ export default class Container {
      */
     _handleClick(e, continer) {
         //获取绑定click的元素集合
-        const eleAry = cce.EventManager._target.click 
+        const eleAry = cce.EventManager._target.click
         //获取鼠标点击在canvas中的坐标
-        const point = continer._windowToCanvas(e.clientX, e.clientY) 
-        if ( !(eleAry instanceof Array)) {
-            return  
+        const point = continer._windowToCanvas(e.clientX, e.clientY)
+        if (!(eleAry instanceof Array)) {
+            return
         }
         eleAry.forEach(item => {
             //如果在里面触发click事件绑定的函数
-            item.hasPoint(point) ? item.fire('click',point,continer) : null 
+            item.hasPoint(point) ? item.fire('click', point, continer) : null
         })
     }
 
@@ -178,17 +266,17 @@ export default class Container {
      */
     draw() {
         //console.log(this.LinsTo);
-        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height) 
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height)
         _.forEach(this.LinsTo, item => {
-            item.draw() 
+            item.draw()
         })
         _.forEach(this.childNodes, item => {
             //if(item.animtionState){console.log(item);}
-            item.draw() 
+            item.draw()
         })
     }
 
-    
+
     /**
      * 算出当前点击的坐标在canvas中的坐标
      * @method _windowToCanvas
@@ -198,11 +286,10 @@ export default class Container {
      * @memberof Container
      */
     _windowToCanvas(x, y) {
-        let bbox = this.canvas.getBoundingClientRect() 
+        let bbox = this.canvas.getBoundingClientRect()
         return {
             x: x - bbox.left,
             y: y - bbox.top
         }
     }
 }
-

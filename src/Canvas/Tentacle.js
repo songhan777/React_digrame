@@ -1,4 +1,6 @@
 import * as _ from 'lodash' 
+import Rect from './rect'
+import { throwError } from 'rxjs';
 
 export  default class Tentacle  extends  cce.DisplayObject {
         constructor() {
@@ -14,29 +16,57 @@ export  default class Tentacle  extends  cce.DisplayObject {
         this.Lins = [] //当前节点中触手的连线
     }
     addIn(ele) {
-        this.In[ele.id] = ele 
-        const flg = this.InAry.some((x) => {
-            return x == ele.id 
-        })
-        !flg?this.InAry.push(ele.id):null 
-        //之前没添加过，在去划线
-        !flg?this.Lins.push({In:ele}):null 
+        const fn = (oEle) => {
+            this.In[oEle.id] = oEle 
+            const flg = this.InAry.some((x) => {
+                return x == oEle.id 
+            })
+            !flg?this.InAry.push(oEle.id):null 
+            //之前没添加过，在去划线
+            !flg?this.Lins.push({In:oEle}):null 
+        } 
+        if (ele.constructor == Array) {
+            ele.forEach(item => {
+                fn(item)
+            })
+        } else if(ele.constructor == Rect) {
+            fn(ele)
+        } else {
+            throwError('addIn添加类型错误')
+        }
     }
+    /**
+     *
+     *
+     * @param {*} ele 数据类型可以是数组也可以是Rect
+     * @memberof Tentacle
+     */
     addOut(ele) {
-        this.Out[ele.id] = ele 
-        const flg = this.OutAry.some((x) => {
-            return x == ele.id 
-        })
-        !flg ? this.OutAry.push(ele.id) : null 
-        !flg ? this.Lins.push({Out:ele}) : null 
+        const fn = (oEle) => {
+            this.Out[oEle.id] = oEle 
+            const flg = this.OutAry.some((x) => {
+                return x == oEle.id 
+            })
+            !flg ? this.OutAry.push(oEle.id) : null 
+            !flg ? this.Lins.push({Out:oEle}) : null 
+        }
+        if (ele.constructor == Array) {
+            ele.forEach(item => {
+                fn(item)
+            })
+        } else if(ele.constructor == Rect) {
+            fn(ele)
+        } else {
+            throwError('addOut添加类型错误')
+        }
     }
     _draw() {
         const self = this 
-        function creatIoNode (self,str) {
+        function creatIoNode (sel,str) {
             let strAry = str + 'Ary';
-            _.forEach(self[str], (item,key) => {
-                const index = self[strAry].indexOf(key) 
-                item.draw(self,index,str) 
+            _.forEach(sel[str], (item,key) => {
+                const index = sel[strAry].indexOf(key) 
+                item.draw(sel,index,str) 
             })
         }
         //先在canvas上画线
@@ -55,10 +85,9 @@ export  default class Tentacle  extends  cce.DisplayObject {
                 this.context.stroke() 
                 this.context.closePath() 
             })
-            creatIoNode(this,this.IO)
+            creatIoNode(self,this.IO)
             return 
         }
-        
         _.forEach(this.Lins, item => {
             this.context.beginPath() 
             this.context.strokeStyle = 'rgba(36,36,36,1)' 
