@@ -1,5 +1,4 @@
 import * as _ from 'lodash'
-import init from './init'
 import menuPath from './menuPath'
 /**
  *
@@ -18,7 +17,7 @@ export default class Container {
      * @property childNodes  {Object} 存放图形的数组元素
      *
      */
-    constructor(canvas,id = null) {
+    constructor(canvas, id = null) {
         this.id = id
         this.canvas = canvas
         this.context = this.canvas.getContext('2d')
@@ -30,6 +29,7 @@ export default class Container {
             state: false,
             IO: null
         } //在连线时，鼠标拖动到这个节点上，弹出需要连接的触手
+        window.cce.Container = this
         this.init()
     }
     init() {
@@ -37,10 +37,10 @@ export default class Container {
     }
     createOwnId() {
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
-            const r = (Math.random() * 16) | 0 
-            const v = c === 'x' ? r : (r & 0x3) | 0x8 
-            return v.toString(16) 
-        }) 
+            const r = (Math.random() * 16) | 0
+            const v = c === 'x' ? r : (r & 0x3) | 0x8
+            return v.toString(16)
+        })
     }
 
     /**
@@ -113,25 +113,25 @@ export default class Container {
             link.type = 'default'
             link.selected = true
             link.points = []
-            link.extras = ''//附加部分
-            link.labels = []//连线标签
-            link.color = ""//颜色
-            link.curvyness = ''// 贝塞尔弯曲度
+            link.extras = '' //附加部分
+            link.labels = [] //连线标签
+            link.color = "" //颜色
+            link.curvyness = '' // 贝塞尔弯曲度
             links.push(link)
             link = null // 清空缓存
         })
         //遍历thischildNodes
-        _.forEach(this.childNodes,(item,key) => {
-            let node = {} 
+        _.forEach(this.childNodes, (item, key) => {
+            let node = {}
             node.id = key
             node.x = item.x
             node.y = item.y
             let ports = []
-            _.forEach(item.In,(p,key) => {
+            _.forEach(item.In, (p, key) => {
                 let port = {}
                 port.id = key
-                port.in = true 
-                port.color = 'rgba(132, 134, 144, 1)'//目前写死的，还不能配置
+                port.in = true
+                port.color = 'rgba(132, 134, 144, 1)' //目前写死的，还不能配置
                 port.parenNode = p.minNode.id
                 //后续增加的接口
                 port.type = 'default'
@@ -141,11 +141,11 @@ export default class Container {
                 //port.label
                 ports.push(port)
             })
-            _.forEach(item.Out,(p,key) => {
+            _.forEach(item.Out, (p, key) => {
                 let port = {}
                 port.id = key
-                port.in = false 
-                port.color = 'rgba(132, 134, 144, 1)'//目前写死的，还不能配置
+                port.in = false
+                port.color = 'rgba(132, 134, 144, 1)' //目前写死的，还不能配置
                 port.parenNode = p.minNode.id
                 //后续增加的接口
                 port.type = 'default'
@@ -157,21 +157,67 @@ export default class Container {
             })
             node.ports = ports
             //后续增加的接口
-            node.r = item.r//目前半径改变的画图形还无法跟着变更
+            node.r = item.r //目前半径改变的画图形还无法跟着变更
             node.type = 'default'
             node.selected = true
-            node.extras = ''//附加属性
+            node.extras = '' //附加属性
             nodes.push(node)
         })
-        return  {id:this.id, links:links, nodes:nodes}
+        return {
+            id: this.id,
+            links: links,
+            nodes: nodes
+        }
     }
     /**
      *将json反序列化成工作流图形
      *
      * @memberof Container
      */
-    unSerialize() {
-
+    unSerialize(json) {
+        function fn(data) {
+            //1.清除container 里的所有数组
+            let rect = {} //将所有输入输出IO存起来，为后来生成连线做准备
+            let container = cce.Container
+            container.enableMouse()
+            container.enableClick()
+            data.nodes.forEach((item, index) => {
+                let Circle = cce.Circle
+                let cir = new Circle(item.x, item.y, item.r, item.id)
+                container.addChild(cir)
+                item.ports.forEach((item, index) => {
+                    let Rect = cce.Rect
+                    let re = new Rect(cir, item.id)
+                    //给节点添加触手（输入输出IO）
+                    if (item.in) {
+                        cir.addIn(re)
+                    } else {
+                        cir.addOut(re)
+                    }
+                    rect[item.id] = re
+                })
+            })
+            data.links.forEach((link, index) => {
+                let Line = cce.Line
+                let source = link.sourcePort
+                let target = link.targetPort
+                let li = new Line(rect[source], rect[target],link.id)
+                container.addLine(li)
+            })
+            container.id = data.id
+        }
+        if (json.constructor == String) {
+            json = JSON.parse(json)
+            if (json.constructor == Object) {
+                fn(json)
+            } else {
+                throw new Error('调用unSerialize传入数据格式不正确')
+            }
+        } else if (json.constructor == Object) {
+            fn(json)
+        } else {
+            throw new Error('调用unSerialize传入数据格式不正确')
+        }
     }
     /**
      * 触发鼠标事件的函数
@@ -181,12 +227,10 @@ export default class Container {
      * @private
      */
     _fireMous(point, eleAry, eleAryName) {
-
         const self = this
         if (!(eleAry instanceof Array)) {
             return
         }
-
         eleAry.forEach(item => {
             if (item.hasPoint(point)) {
                 //返回true在图形内部

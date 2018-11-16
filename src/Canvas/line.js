@@ -1,39 +1,36 @@
 import * as _ from 'lodash'
 import img from '../img/img_line_1.png'
+import DisplayObject from './DisplayObject'
 import {
     accAdd,
     accSub,
     accMul,
     accDiv
 } from './math.js'
-export default class Line extends cce.DisplayObject {
-    constructor(aa, bb) {
+export default class Line extends DisplayObject {
+    constructor(aa, bb,id = null) {
         super()
         this.from = aa
         this.to = bb
         this.cachCanvas = document.createElement("canvas")
         this.cachContxt = this.cachCanvas.getContext("2d")
         this.linImg = {}
-        this.init()
+        this._init()
     }
-    init() {
+    _init() {
         this.linImg = new Image()
         this.linImg.src = img
         this.linImg.onload = () => {
             this.cachContxt.drawImage(this.linImg, 0, 0)
             this.cachContxt.save();
         }
+
     }
     draw() {
         let x = null
         let y = null
-        if (this.to.node == undefined) {
-            x = this.to.x
-            y = this.to.y
-        } else {
-            x = this.to.node.x
-            y = this.to.node.y
-        }
+        x = this.to.node.x || this.to.x
+        y = this.to.node.y || this.to.y
 
         function createArrow(ctx, ary, sta, end) {
             //画箭头 

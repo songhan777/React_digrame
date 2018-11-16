@@ -14,7 +14,7 @@ export default class Circle extends Tentacle {
      *  @property y
      *  @property r
      */
-    constructor(x = 0, y = 0, r = 50) {
+    constructor(x = 0, y = 0, r = 50,id = null) {
         super()
         this.x = x
         this.y = y
@@ -23,10 +23,10 @@ export default class Circle extends Tentacle {
         //记录当前点击次数的，0代表无状态，切所有的动画都有收回，1，代表当前点击了一次，触手深处，2.代表单签点击了两次执行功能动画,3.只展开一半，共连线链接
         this.click = 0
         this.IO = '' //当click等于3时，这个值记录当前要展开的触手是输入还是输出
-        this._init()
         this.isCach = false;
         this.cachCanvas = document.createElement("canvas")
         this.cachContxt = this.cachCanvas.getContext("2d")
+        this._init()
     }
     _init() {
         this.factory()

@@ -1,9 +1,9 @@
 import Line from './line'
-
+import DisplayObject from './DisplayObject'
 const start_location = 60;
 const run_time = 800;
-export  default class Rect  extends  cce.DisplayObject {
-    constructor(ele) {
+export  default class Rect  extends  DisplayObject {
+    constructor(ele,id = null) {
         super() 
         this.minNode = ele //存取主节点的位置
         this.node = ele //用来画当前方形的圆心

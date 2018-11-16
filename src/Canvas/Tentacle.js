@@ -1,8 +1,9 @@
 import * as _ from 'lodash' 
 import Rect from './rect'
+import DisplayObject from './DisplayObject'
 import { throwError } from 'rxjs';
 
-export  default class Tentacle  extends  cce.DisplayObject {
+export  default class Tentacle  extends  DisplayObject {
         constructor() {
         super() 
         this.In = {} 

@@ -17,17 +17,23 @@ import  EventTarget from  './EventTarget'
        * @memberof DisplayObject
        * 
        */
-      constructor() {
+      constructor(...arg) {
             super() 
             this.canvas = null 
             this.context = null 
             this.lastState=null 
-            this.nowState=null 
-            this.id=null 
+            this.nowState=null
+            let [id] = arg  
+            this.id = id  
             this.init() 
         }
         init(){
-            this.id = this.createOwnId() 
+            if (this.id == null) {
+                this.id = this.createOwnId()
+            } else if (this.id.length != 36) {
+                throw new Error('ID初始化错误，ID格式错误')
+            }
+            
         }
         createOwnId() {
             return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
