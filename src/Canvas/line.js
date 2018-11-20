@@ -29,8 +29,14 @@ export default class Line extends DisplayObject {
     draw() {
         let x = null
         let y = null
-        x = this.to.node.x || this.to.x
-        y = this.to.node.y || this.to.y
+
+        if (this.to.node) {
+            x = this.to.node.x 
+            y = this.to.node.y
+        } else {
+            x = this.to.x
+            y = this.to.y
+        }
 
         function createArrow(ctx, ary, sta, end) {
             //画箭头 
@@ -84,13 +90,12 @@ export default class Line extends DisplayObject {
         this.context.moveTo(this.from.node.x, this.from.node.y)
         this.context.lineTo(x, y)
         this.context.lineWidth = 10
-        //this.context.closePath()
         this.context.stroke()
         this.context.save()
         let ary = []
         makeArrowsReference(ary, [this.from.node.x, this.from.node.y], [x, y])
         createArrow(this.context, ary, [this.from.node.x, this.from.node.y], [x, y])
         this.context.restore()
-        this.context.closePath();
+        this.context.closePath()
     }
 }

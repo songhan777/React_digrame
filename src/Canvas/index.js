@@ -6,6 +6,7 @@ import lin from './line'
 import Re from './rect'
 import ev from './EventTarget'
 import con from './Container'
+import wid from './Widge'
 ~(function () {
     let cce  = {} 
     cce.EventManager = new Eventmanager() 
@@ -22,5 +23,6 @@ export let Rect = Re
 export let Line = lin
 export let EventTarget = ev
 export let DisplayObject = Dis 
+export let Widge = wid
 
 

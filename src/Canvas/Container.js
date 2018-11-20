@@ -19,8 +19,8 @@ export default class Container {
      */
     constructor(canvas, id = null) {
         this.id = id
-        this.canvas = canvas
-        this.context = this.canvas.getContext('2d')
+        this.canvas = canvas || null
+        this.canvas ? this.context = this.canvas.getContext('2d') : this.context = null;
         this.LinsTo = {} //存放线图形的
         this.childNodes = {}
         this.menu = menuPath
@@ -34,6 +34,10 @@ export default class Container {
     }
     init() {
         if (this.id == null) this.id = this.createOwnId();
+        if (this.canvas != null) {
+            this.enableMouse()
+            this.enableClick()
+        }
     }
     createOwnId() {
         return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
@@ -42,7 +46,20 @@ export default class Container {
             return v.toString(16)
         })
     }
-
+    addCanvas(canvas) {
+        this.canvas = canvas 
+        this.context = this.canvas.getContext('2d')
+        this.enableMouse() 
+        this.enableClick() 
+        _.forEach(this.childNodes,(item,key)=>{
+            item.canvas = this.canvas
+            item.context = this.context
+        })
+        _.forEach(this.LinsTo,(item,key)=>{
+            item.canvas = this.canvas
+            item.context = this.context
+        })
+    }
     /**
      * 操作Mousemove的方法
      * @method _handleMousemove
@@ -294,13 +311,24 @@ export default class Container {
         const eleAry = cce.EventManager._target.click
         //获取鼠标点击在canvas中的坐标
         const point = continer._windowToCanvas(e.clientX, e.clientY)
+        console.log(eleAry)
         if (!(eleAry instanceof Array)) {
             return
         }
+        let outSide = true;
         eleAry.forEach(item => {
             //如果在里面触发click事件绑定的函数
-            item.hasPoint(point) ? item.fire('click', point, continer) : null
+            let flg =  item.hasPoint(point) 
+           flg ? item.fire('click', point, continer) : null
+           flg ? outSide = false :null 
         })
+        console.log(outSide)
+        if (outSide) {//如果点击的地方在图形外面，就把动画都收起来
+                if (this.displayId != null ) {
+                    let ID = this.displayId
+                    this.childNodes[ID].click = 0
+                }
+           }
     }
 
     /**

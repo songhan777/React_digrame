@@ -1,5 +1,5 @@
 import React from 'react' 
-import {Container, Rect, Circle,} from './Canvas/index.js' 
+import {Container, Rect, Circle, Widge} from './Canvas/index.js' 
 import * as _ from 'lodash' 
 
 
@@ -7,10 +7,8 @@ export default class APP extends React.Component {
     constructor (){
         super() 
         this.canvas = React.createRef()
-        this.container = this.container
         this.state = {
-            s : [] ,
-            a : ""
+            container:{}
         }
     }
     componentWillMount(){
@@ -18,11 +16,9 @@ export default class APP extends React.Component {
         }) 
     }
     componentDidMount(){
-        let  container = new Container(this.canvas.current) 
-        this.container = container
-/*         container.enableMouse() 
-        container.enableClick() 
-        console.log(Circle)
+        let  container = new Container() 
+        this.setState({container:container})
+
         let circle = new Circle(200,200,50) 
         container.addChild(circle) 
 
@@ -58,18 +54,9 @@ export default class APP extends React.Component {
         let recIn21 = new Rect(circle1) 
         let recOut21 = new  Rect(circle1) 
         circle1.addIn(recIn21) 
-        circle1.addOut(recOut21)  */
+        circle1.addOut(recOut21)  
   
 
-        function animate(){
-            container.draw()
-            RAF(animate) 
-        }
-      
-        window.RAF = (function(){
-            return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function (callback) {window.setTimeout(callback, 1000 / 60); };
-        })();
-        RAF(animate)
         }
         btnClick = () => {
             console.log(JSON.stringify(this.container.serialize()))
@@ -80,7 +67,7 @@ export default class APP extends React.Component {
         }
     render() {
         return (<div>
-            <canvas  ref ={this.canvas} height='800' width='1500' style={{border:'1px solid rgba(0,0,0,1)' }}></canvas>
+            <Widge container ={this.state.container} />
             <button onClick={this.btnClick}>序列化</button>
             <button onClick={this.unser}>反序列化</button>
             </div>)

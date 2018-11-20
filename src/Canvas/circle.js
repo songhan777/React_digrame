@@ -82,6 +82,9 @@ export default class Circle extends Tentacle {
         })
         // 自定义的点击事件，延迟点击，防止拖拽时候触发点击事件
         this.on('mySelfClick',f)
+        this.on('click',function() {
+            
+        })
     }
     draw() {
         if (!this.menu.state) {
