@@ -1,5 +1,5 @@
 import * as _ from 'lodash'
-import img from '../img/img_line_1.png'
+
 import DisplayObject from './DisplayObject'
 import {
     accAdd,
@@ -15,7 +15,7 @@ export default class Line extends DisplayObject {
         this.cachCanvas = document.createElement("canvas")
         this.cachContxt = this.cachCanvas.getContext("2d")
         this.linImg = {}
-        this._init()
+        //this._init()
     }
     _init() {
         this.linImg = new Image()

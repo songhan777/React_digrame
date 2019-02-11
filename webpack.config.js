@@ -16,7 +16,13 @@ module.exports = {
     },
     module: {
         rules: [
-            {test:/\.(js|jsx)$/,use:"babel-loader",exclude:/node_modules/},
+            {test:/\.(js|jsx)$/,use:{
+                loader: 'babel-loader',
+                options: {
+                    presets: ['env','react', 'stage-0'],
+                    plugins: ['transform-decorators-legacy']
+                }
+            },exclude:/node_modules/},
             {test:/\.css$/,use:["style-loader","css-loader"],exclude:/node_modules/},
             {test:/\.less$/,use:["style-loader","css-loader","less-loader"],exclude:/node_modules/},
             {test:/\.(jpg|png|gif)$/,use:"url-loader",exclude:/node_modules/}
