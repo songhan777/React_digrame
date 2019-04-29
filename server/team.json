@@ -1,0 +1,52 @@
+{
+  "personageName": "欧阳霸天",
+  "personageImg": "static/images/uxceo-128.jpg",
+  "personageMailbox": "zhoujielun@126.com",
+  "teamNumber":2,
+  "cooperatorNumber":2,
+  "team": [
+    {
+      "taskId":1,
+      "img": "/static/images/cards/contemplative-reptile.jpg",
+      "name": "李小龙",
+      "mailbox": "zhoujielun@126.com"
+    },{
+      "taskId":2,
+      "img": "/static/images/cards/contemplative-reptile.jpg",
+      "name": "周杰伦",
+      "mailbox": "zhoujielun@126.com"
+    },
+    {
+      "taskId":3,
+      "img": "/static/images/cards/contemplative-reptile.jpg",
+      "name": "李小龙",
+      "mailbox": "zhoujielun@126.com"
+    }
+  ],
+  "cooperator": [
+    {
+      "taskId":1,
+      "teamImg": [
+        {"img":"static/images/uxceo-128.jpg","name":"落雨"},
+        {"img":"static/images/uxceo-128.jpg","name":"落雨"},
+        {"img":"static/images/uxceo-128.jpg","name":"落雨"}
+      ],
+      "teamName": "地球上最牛皮的程序员甲",
+      "cooperationNumber": 23,
+      "cooperatorNumber": 213,
+      "teamNumber": "000002"
+    },
+    {
+      "taskId":2,
+      "teamImg": [
+        {"img":"static/images/uxceo-128.jpg","name":"落雨"},
+        {"img":"static/images/uxceo-128.jpg","name":"落雨"},
+        {"img":"static/images/uxceo-128.jpg","name":"落雨"}
+      ],
+      "teamName": "地球上最牛皮的程序员",
+      "cooperationNumber": 5,
+      "cooperatorNumber": 111,
+      "teamNumber": "000001"
+    }
+  ]
+}

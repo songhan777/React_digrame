@@ -18,21 +18,27 @@ const styles = theme => ({
 })
 
 class Workbench extends Component {
-    static propTypes = {
+  /*  static propTypes = {
         prop: PropTypes
-    }   
+    }   */
+
+    componentDidMount(){
+        console.log("工作流请求参数的传递");
+        console.log(this.props.match.params);
+    }
+
     render() {
         const { classes } = this.props 
         return (
             <div className={classes.root}>
-                <ModleDrawer />
+                <ModleDrawer/>
                 <WorkSpace />
             </div>
         )
     }
 }
 
-Workbench.propTypes = {
+/*Workbench.propTypes = {
     clsses:PropTypes.object.isRequired
-}
+}*/
 export default withStyles(styles)(Workbench)

@@ -1,0 +1,1 @@
+import createHistory from 'histry/createBrowserHistory'

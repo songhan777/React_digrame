@@ -16,10 +16,10 @@ const styles = {
 };
 
 function ImageAvatars(props) {
-    const { classes } = props;
+    const { classes ,img} = props;
     return (
-        <div className={classes.row}>
-            <Avatar alt="Remy Sharp" src="/static/images/cards/contemplative-reptile.jpg" className= {classes.avatar} />
+        <div className={classes.row} >
+            <Avatar alt="Remy Sharp" src={img} className= {classes.avatar} />
         </div>
     );
 }

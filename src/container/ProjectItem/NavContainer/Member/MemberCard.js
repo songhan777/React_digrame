@@ -1,6 +1,6 @@
-import React, { Component } from 'react'
+import React, {Component} from 'react'
 import PropTypes from 'prop-types'
-import { withStyles } from '@material-ui/core'
+import {withStyles} from '@material-ui/core'
 import Card from '@material-ui/core/Card'
 import CardHeader from '@material-ui/core/CardHeader'
 import CardContent from '@material-ui/core/CardContent'
@@ -9,15 +9,15 @@ import Typography from '@material-ui/core/Typography'
 import red from '@material-ui/core/colors/red'
 import MoreVertIcon from '@material-ui/icons/MoreVert'
 import Button from '@material-ui/core/Button'
-import { Link } from 'react-router-dom'
+import {Link, hashHistory} from 'react-router-dom'
 import ImageAvatars from '../../../ProjectLits/ProjectCard/ImageAvatars'
 
 const styles = theme => ({
     root: {
-        paddingTop: theme.spacing.unit * 2 ,
-        paddingRight: theme.spacing.unit * 2 ,
-        paddingLeft: theme.spacing.unit * 2 ,
-        paddingBottom: theme.spacing.unit * 2 ,
+        paddingTop: theme.spacing.unit * 2,
+        paddingRight: theme.spacing.unit * 2,
+        paddingLeft: theme.spacing.unit * 2,
+        paddingBottom: theme.spacing.unit * 2,
     },
     card: {
         maxWidth: 300,
@@ -53,10 +53,18 @@ const styles = theme => ({
     memtagColor: {
         display: 'inline-block',
         width: 15,
-        height:15 ,
+        height: 15,
         borderRadius: 5,
         backgroundColor: theme.palette.error.main,
-        marginRight:40
+        marginRight: 40
+    },
+    memberColor: {
+        display: 'inline-block',
+        width: 15,
+        height: 15,
+        borderRadius: 5,
+        backgroundColor: "#00FF00",
+        marginRight: 40
     }
 });
 
@@ -64,58 +72,54 @@ class WfCard extends Component {
     static propTypes = {
         prop: PropTypes
     }
-    state = {
-        expanded: false
-    };
-
-    handleExpandClick = () => {
-        this.setState(state => ({
-            expanded: !state.expanded
-        }));
-    };
 
     render() {
-        const { classes } = this.props
+        const {classes, data, match} = this.props;
+        let color = data.rank !== "成员" ? <span className={classes.memtagColor}></span> :
+            <span className={classes.memberColor}></span>;
+        console.log("成员数");
+        console.log(match);
+        let path = `/pji/${match.params.projectId}/dm/${data.memberId}`;
         return (
-            <Button className={classes.root} component={Link} to="/wf">
+            <Button className={classes.root} component={Link} to={path}>
                 <Card className={classes.card}>
                     <CardHeader
                         title={
-                        <Typography variant="h6">
-                            这是第一个工作流
-                        </Typography>
+                            <Typography variant="h6">
+                                {data.name}
+                            </Typography>
                         }
                         avatar={
-                            <ImageAvatars />
+                            <ImageAvatars img={data.img}/>
                         }
                         action={
                             <IconButton>
-                                <MoreVertIcon />
+                                <MoreVertIcon/>
                             </IconButton>
                         }
                         subheader={
                             <div>
                                 <Typography component="p" color="textSecondary">
-                                    104034343@qq.com
+                                    {data.mailbox}
                                 </Typography>
                             </div>
                         }
                     />
                     <CardContent>
                         <div className={classes.memtag}>
-                            <span className={classes.memtagColor}></span>
-                            创建者
+                            {color}
+                            {data.rank}
                         </div>
                     </CardContent>
                 </Card>
-        
+
             </Button>
-            )
+        )
     }
 }
 
 WfCard.propTypes = {
-    classes:PropTypes.object.isRequired,
+    classes: PropTypes.object.isRequired,
 }
 
 export default withStyles(styles)(WfCard)

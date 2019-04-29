@@ -76,7 +76,7 @@ export default class componentName extends Component {
     } */
     render() {
         return (
-            <div ref = {this.div} style= {{height:'100%',width:'100%'}}  >
+            <div ref = {this.div} style= {{height:'100%',width:'100%', backgroundColor:"#fff"}}  >
                 <canvas  ref ={this.canvas} height={this.state.height} width={this.state.width} ></canvas>
             </div>
         )

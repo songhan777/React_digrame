@@ -1,6 +1,6 @@
-import React, { Component } from 'react'
+import React, {Component} from 'react'
 import PropTypes from 'prop-types'
-import { withStyles } from '@material-ui/core/styles';
+import {withStyles} from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card'
 import CardActionArea from '@material-ui/core/CardActionArea'
 import CardActions from '@material-ui/core/CardActions'
@@ -13,14 +13,14 @@ import Button from '@material-ui/core/Button'
 import AddIcon from '@material-ui/icons/Add'
 import PlayArrow from '@material-ui/icons/PlayArrow'
 import TextField from '@material-ui/core/TextField';
-import { observer, inject} from 'mobx-react'
+import {observer, inject} from 'mobx-react'
 
 const styles = theme => ({
-    root:{
-        paddingTop: theme.spacing.unit * 2 ,
-        paddingRight: theme.spacing.unit * 2 ,
-        paddingLeft: theme.spacing.unit * 2 ,
-        paddingBottom: theme.spacing.unit * 2 ,
+    root: {
+        paddingTop: theme.spacing.unit * 2,
+        paddingRight: theme.spacing.unit * 2,
+        paddingLeft: theme.spacing.unit * 2,
+        paddingBottom: theme.spacing.unit * 2,
     },
     card: {
         maxWidth: 250,
@@ -40,16 +40,33 @@ const styles = theme => ({
         objectFit: 'cover',
     },
     addCircle: {
-        color:theme.palette.primary.dark,
+        width:40,
+        height:40,
+        borderRadius:20,
+        display:"flex",
+        justifyContent:"center",
+        alignItems:"center",
+        color: theme.palette.primary.dark,
         '&:hover': {
-            color: theme.palette.primary.light
+            color: theme.palette.primary.light,
+            backgroundColor:"#A3E4D7",
         }
     },
     editBtn: {
+        width:40,
+        height:40,
+        borderRadius:20,
+        display:"flex",
+        justifyContent:"center",
+        alignItems:"center",
         position: 'absolute',
         right: theme.spacing.unit * 2,
-        top: theme.spacing.unit * 2, 
+        top: theme.spacing.unit * 2,
         backgroundColor: theme.palette.common.white,
+        '&:hover': {
+            color: theme.palette.primary.light,
+            backgroundColor:"#A3E4D7",
+        }
     },
     List: {
         width: '100%'
@@ -59,28 +76,28 @@ const styles = theme => ({
         alignItems: 'center',
         justifyContent: 'space-around',
         width: '100%',
-        padding:0
+        padding: 0
     },
     textField: {
         flexGrow: '2'
     },
     Arrow: {
-        '&:hover':{
-            color:theme.palette.error.light
+        '&:hover': {
+            color: theme.palette.error.light
         }
     }
-
 })
 
 @inject("store")
 @observer
 class CreateProjectCard extends Component {
-    constructor(props){
+    constructor(props) {
         super(props)
         this.store = props.store.proListStore
         this.setDisplayCreatCard = this.store.setDisplayCreatCard
         this.inputRef = React.createRef();
     }
+
     state = {
         upPreviewFlg: false,
         imgUrlResulat: '',
@@ -96,6 +113,7 @@ class CreateProjectCard extends Component {
     }
 
     fileChange = (e) => {
+        console.log(1)
         const files = this.inputRef.current.files
         const length = files.length
 
@@ -116,93 +134,112 @@ class CreateProjectCard extends Component {
                 return;
             }
             //读取完成
-            reader.onload =  (e) => {
+            reader.onload = (e) => {
                 this.setState({
-                    imgUrlResulat:e.target.result,
-                    upPreviewFlg:true
+                    imgUrlResulat: e.target.result,
+                    upPreviewFlg: true
                 })
             };
             reader.readAsDataURL(file)
         } else {
             alert("您的设备不支持图片预览功能，如需该功能请升级您的设备！");
             let form = new FormData();//FormData对象
-            form.append("file",fileObj);//文件对象
+            form.append("file", fileObj);//文件对象
             this.setState({form})
 
         }
-/* 
-        let form = new FormData(); // FormData 对象
-        form.append("file", fileObj); // 文件对象 */
+        /*
+                let form = new FormData(); // FormData 对象
+                form.append("file", fileObj); // 文件对象 */
     }
 
     hanleChange = (e) => {
-        this.setState({name:e.target.value})
+        console.log(2)
+        this.setState({name: e.target.value})
     }
 
     actionInfoToServer = () => {
-        if(this.state.name == '') {
+        console.log(3)
+        if (this.state.name == '') {
             alert('请填写项目名称')
-            return 
+            return
         }
-        this.setDisplayCreatCard(false)
+        //这里需要一个接口，来增加
+        console.log("addDate");
+        //这里需要将函数
         console.log(this.state.name)
         console.log(this.state.imgUrlResulat)
-    }
+        // 这里需要的参数就是  需要推送add的参数, 将需要整理的参数处理好。
+        // 这里需要
+        let myDate=new Date();
+        console.log("时间");
+        console.log(myDate);
+        let newObject = {
+            bg: this.state.imgUrlResulat,
+            class: "生物",//这个参数该怎么控制。
+            mtime: myDate,//时间参数
+            title: this.state.name
+        };
+        this.props.addList(newObject)
+        this.setDisplayCreatCard(false)
+    };
 
     render() {
-        const { classes } = this.props
+        const {classes} = this.props
         return (
             <div className={classes.root}>
-            <Card className={classes.card}>
-                <CardActionArea>
-                    <div className={classes.media} elevation={1}>
-                        <input  
-                            type="file" 
-                            ref={this.inputRef} 
-                            style={{display:'none'}} 
-                            onChange={this.fileChange}
-                        />
-                        {this.state.upPreviewFlg 
-                        ? 
-                        <CardMedia 
-                            component="img" 
-                            alt="Contemplative Reptile" 
-                            className={classes.mediaImg} 
-                            height="140" 
-                            image={this.state.imgUrlResulat} 
-                            title="Contemplative Reptile" /> 
-                        :
-                        <Button variant="fab"  className={classes.addCircle} aria-label="Add" onClick={this.handleAddImg} >
-                            <AddIcon />
-                        </Button>
-                        }
-                    </div>
-                    <IconButton className={classes.editBtn} aria-label='Edit' onClick={this.hanleCloseCreateCard}>
-                        <Clear />
-                    </IconButton>
-                </CardActionArea>
-                <CardActions>
-                    <List dense disablePadding={true} className={classes.List} >
-                        <ListItem disableGutters className={classes.ListItem} >
-                            <TextField
-                                id="standard-bare"
-                                className={classes.textField}
-                                placeholder="输入项目名称"
-                                margin="normal"
-                                value={this.state.name}
-                                onChange={this.hanleChange}
+                <Card className={classes.card}>
+                    <CardActionArea>
+                        <div className={classes.media} elevation={1}>
+                            <input
+                                type="file"
+                                ref={this.inputRef}
+                                style={{display: 'none'}}
+                                onChange={this.fileChange}
                             />
-                            <PlayArrow className={classes.Arrow} onClick={this.actionInfoToServer} />
-                        </ListItem>
-                    </List>
-                </CardActions>
-            </Card>
+                            {this.state.upPreviewFlg
+                                ?
+                                <CardMedia
+                                    component="img"
+                                    alt="Contemplative Reptile"
+                                    className={classes.mediaImg}
+                                    height="140"
+                                    image={this.state.imgUrlResulat}
+                                    title="Contemplative Reptile"/>
+                                :
+                                <Card variant="fab" className={classes.addCircle} aria-label="Add"
+                                        onClick={this.handleAddImg}>
+                                    <AddIcon/>
+                                </Card>
+                            }
+                        </div>
+                        <Card className={classes.editBtn} aria-label='Edit' onClick={this.hanleCloseCreateCard}>
+                            <Clear/>
+                        </Card>
+                    </CardActionArea>
+                    <CardActions>
+                        <List dense disablePadding={true} className={classes.List}>
+                            <ListItem disableGutters className={classes.ListItem}>
+                                <TextField
+                                    id="standard-bare"
+                                    className={classes.textField}
+                                    placeholder="输入项目名称"
+                                    margin="normal"
+                                    value={this.state.name}
+                                    onChange={this.hanleChange}
+                                />
+                                <PlayArrow className={classes.Arrow} onClick={this.actionInfoToServer}/>
+                            </ListItem>
+                        </List>
+                    </CardActions>
+                </Card>
             </div>
         )
     }
 }
+
 CreateProjectCard.propTypes = {
     classes: PropTypes.object.isRequired,
 }
-    
+
 export default withStyles(styles)(CreateProjectCard);

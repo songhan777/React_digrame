@@ -1,0 +1,45 @@
+{
+    "personageName": "欧阳霸天",
+    "personageImg": "static/images/uxceo-128.jpg",
+    "personageMailbox": "zhoujielun@126.com",
+    "teamNumber":2,
+    "cooperatorNumber":2,
+    "team": [
+    {
+    "img": "/static/images/cards/contemplative-reptile.jpg",
+    "name": "李小龙",
+    "mailbox": "zhoujielun@126.com"
+    },{
+    "img": "/static/images/cards/contemplative-reptile.jpg",
+    "name": "周杰伦",
+    "mailbox": "zhoujielun@126.com"
+    },
+    {
+    "img": "/static/images/cards/contemplative-reptile.jpg",
+    "name": "李小龙",
+    "mailbox": "zhoujielun@126.com"
+    }
+    ],
+    "cooperator": [
+    {
+    "teamImg": [
+    "static/images/uxceo-128.jpg"
+    ],
+    "teamName": "地球上最牛皮的程序员甲",
+    "cooperationNumber": 23,
+    "cooperatorNumber": 213,
+    "teamNumber": "000002"
+    },
+    {
+    "teamImg": [
+    "static/images/uxceo-128.jpg",
+    "static/images/uxceo-128.jpg",
+    "static/images/uxceo-128.jpg"
+    ],
+    "teamName": "地球上最牛皮的程序员",
+    "cooperationNumber": 5,
+    "cooperatorNumber": 111,
+    "teamNumber": "000001"
+    }
+    ]
+    }
